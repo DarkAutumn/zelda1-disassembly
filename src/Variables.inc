@@ -46,10 +46,17 @@ SongPhraseIndex := $6C
 CustomEnvelopeOffsetTune1 := $6D
 NoteLengthTune1 := $6E
 NoteCounterTune1 := $6F
+; TRIFORCE: Object table base addresses. Each table has 13 slots (0x00-0x0C):
+; TRIFORCE:   Slot 0 = Link, Slots 1-10 = enemies/objects, Slot 11 ($0B) = sword melee,
+; TRIFORCE:   Slot 12 ($0C) = unused, Slot 13 ($0D) = boomerang/bait,
+; TRIFORCE:   Slot 14 ($0E) = beam/arrow/magic, Slot 15+ = misc
+; TRIFORCE: Python: asm_addresses.py has SLOT_LINK=0, SLOT_SWORD=0x0B, SLOT_BEAM=0x0E
 ObjX := $70
 ObjY := $84
 ObjDir := $98
 RoomItemId := $AB
+; TRIFORCE: ObjState[$0B] = sword melee state (0→1→2→3→4→5→0)
+; TRIFORCE: ObjState[$0E] = beam state ($00=inactive, $10=active, $11=spread)
 ObjState := $AC
 ObjShoveDir := $C0
 ObjShoveDistance := $D3
@@ -255,7 +262,14 @@ InvMap9 := $66A
 InvClock := $66C
 InvRupees := $66D
 InvKeys := $66E
+; TRIFORCE: HeartValues encoding: high nibble = containers_minus_one, low nibble = hearts_filled
+; TRIFORCE: Full health for beams: filled == containers_minus_one (not containers!)
+; TRIFORCE: 16-heart case: $FF (c-1=15, filled=15)
+; TRIFORCE: Python: ZeldaGame.hearts_and_containers → data.json "hearts_and_containers"
 HeartValues := $66F
+; TRIFORCE: HeartPartial: $00=empty, $01-$7F=half heart, $80-$FF=full partial
+; TRIFORCE: Beam check requires partial >= $80
+; TRIFORCE: Python: ZeldaGame.partial_hearts → data.json "partial_hearts"
 HeartPartial := $670
 InvTriforce := $671
 LastBossDefeated := $672

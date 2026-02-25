@@ -4537,6 +4537,10 @@ UpdateSwordOrRod:
 :
     JSR Anim_WriteItemSprites
 
+    ; TRIFORCE: Sword melee state machine: 0x01→0x02→0x03→0x04→0x05→0x00
+    ; TRIFORCE: State 3 is when MakeSwordShot is called (beam fires here if health is full)
+    ; TRIFORCE: Timing: state 1 (4f), 2 (8f), 3 (1f), 4 (1f), 5 (1f) — total ~15 frames
+    ; TRIFORCE: Python: frame_skip_wrapper.py ATTACK_COOLDOWN=15 matches this total
     ; If state <> 3, return.
     LDA ObjState, X
     AND #$0F
@@ -4614,6 +4618,11 @@ ResetObjState:
     RTS
 
 MakeSwordShot:
+    ; TRIFORCE: Beam health check — Python: Link._is_health_full_for_beams (link.py)
+    ; TRIFORCE: Beam fires when: filled == containers_minus_one AND partial >= $80
+    ; TRIFORCE: BUG-1 was fixed: old Python used float comparison which disagreed at edges.
+    ; TRIFORCE: Beam spawns in slot $0E (SLOT_BEAM) with initial state $10.
+    ;
     ; Try to activate a sword shot.
     ;
     ; Switch to shot slot $E.
@@ -4629,6 +4638,10 @@ MakeSwordShot:
     LDA ForceSwordShot
     BNE @SetUp
 
+    ; TRIFORCE: HeartValues ($066F) encoding:
+    ; TRIFORCE:   High nibble = heart_containers - 1 (e.g., 3 containers → $2x)
+    ; TRIFORCE:   Low nibble  = hearts_filled (0-15)
+    ; TRIFORCE: For beams: filled must equal containers_minus_one (high nibble)
     ; If full hearts <> (heart containers - 1), return.
     LDA HeartValues
     PHA
@@ -4642,6 +4655,8 @@ MakeSwordShot:
     CMP $00
     BNE L1F854_Exit
 
+    ; TRIFORCE: HeartPartial ($0670): $00=empty, $01-$7F=half, $80-$FF=full
+    ; TRIFORCE: Beam requires partial >= $80 (at least a full partial heart)
     ; If partial heart is less than half full, return.
     LDA HeartPartial
     CMP #$80
@@ -4651,6 +4666,8 @@ MakeSwordShot:
     LDA #$01                    ; Sword shot sound effect
     JSR PlaySample
 
+    ; TRIFORCE: Beam initial state is $10 (0x10). Python: ANIMATION_BEAMS_ACTIVE = 0x10
+    ; TRIFORCE: After ~22 frames at $10, transitions to $11 (spread). Python: ANIMATION_BEAMS_HIT = 0x11
     ; Go finish setting up a sword shot in initial state $10.
     LDA #$10
     BNE SetUpWeaponWithState

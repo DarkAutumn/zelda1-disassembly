@@ -2717,6 +2717,14 @@ UpdateMode11Death_SubC:
 :
     RTS
 
+; TRIFORCE: Screen lock boundaries — Python: Link.is_sword_screen_locked, get_sword_directions_allowed
+; TRIFORCE: OW bounds (first 4): down=$D6, up=$45, right=$E9, left=$07
+; TRIFORCE: UW bounds (next 4):  down=$C6, up=$55, right=$D9, left=$17
+; TRIFORCE: Inner bounds (last 4): down=$BE, up=$54, right=$D1, left=$1F
+; TRIFORCE: Inner bounds mask A button (sword). Outer bounds mask directions.
+; TRIFORCE: Direction-dependent: checks facing dir vs boundary. Only blocks movement TOWARD edge.
+; TRIFORCE: Python approximation: checks position against bounds regardless of direction (known approx).
+;
 ; Three sets of border coordinates:
 ; - outer OW
 ; - outer UW
