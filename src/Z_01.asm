@@ -3917,6 +3917,10 @@ PlaceWeaponForPlayerStateAndAnim:
     LDA #$01
     STA ObjAnimCounter
 
+; TRIFORCE: This sets ObjState[0] (Link) = $10, which is the animation lock state.
+; TRIFORCE: Link state values during melee: $11 (swing, 12f) → $31 (finish, 1f) → $00 (controllable)
+; TRIFORCE: Link state values during item use: $11 (6f) → $31 (6f) → $00 (controllable)
+; TRIFORCE: Python: frame_skip_wrapper polls link_status==0 AND sword_animation==0
 PlaceWeaponForPlayerState:
     LDA #$10
     STA ObjState

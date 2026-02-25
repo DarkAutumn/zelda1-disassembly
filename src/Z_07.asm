@@ -4387,6 +4387,12 @@ PlayerToWeaponOffsetsY:
     .BYTE $F7, $F2, $F5, $F5, $F6, $0D, $03, $03
     .BYTE $F7, $09, $03, $03, $FF, $05, $03, $03
 
+; TRIFORCE: Sword melee state machine handler.
+; TRIFORCE: States: 1(4f)→2(8f)→3(1f)→4(1f)→5(1f)→6(deactivate) = 15 frames total
+; TRIFORCE: ObjAnimCounter is used as the frame timer for each state.
+; TRIFORCE: State 2 gets 8 frames; all others get 1 frame (but state 1 gets its timer from caller).
+; TRIFORCE: State 3 triggers MakeSwordShot (beam check) in UpdateSwordShotOrMagicShot.
+; TRIFORCE: Python: polls sword_animation==0 (state reset at state 6) for controllability.
 UpdateSwordOrRod:
     ; If state = 0, the object is not active. So, return.
     LDA ObjState, X
