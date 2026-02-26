@@ -5276,6 +5276,10 @@ ObjectTypeToAttributes:
     .BYTE $81, $81, $81, $E3, $E3, $E3, $E3, $E3
     .BYTE $E1, $E1, $E1, $E1, $E1, $81, $81
 
+; TRIFORCE: HP lookup table, 2 enemies packed per byte. Even types use high nibble (AND $F0),
+; TRIFORCE: odd types use low nibble (<<4). Result is always multiple of $10; Python reads >>4.
+; TRIFORCE: 0-HP entries: Gel($14,$15), Keese($1B-$1D) — die in one hit.
+; TRIFORCE: Verified empirically: goriya=$30(3HP), stalfos=$20(2HP), keese=$00.
 ObjectTypeToHpPairs:
     .BYTE $06, $43, $25, $31, $12, $24, $81, $14
     .BYTE $22, $42, $00, $A9, $8F, $20, $00, $3F

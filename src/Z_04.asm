@@ -10999,6 +10999,9 @@ Ganon_ActivateRoomItem:
 ; Returns:
 ; A: hit points for object type
 ;
+; TRIFORCE: Extracts one enemy's HP from the packed byte in ObjectTypeToHpPairs.
+; TRIFORCE: Even types: AND $F0 (keep high nibble). Odd types: low nibble << 4.
+; TRIFORCE: Result always has low nibble=0. Python reads ObjHP >> 4 for HP count.
 ExtractHitPointValue:
     PHA
 

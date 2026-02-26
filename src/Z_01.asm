@@ -5970,6 +5970,9 @@ HandleMonsterWeaponCollision:
     CMP #$03
     BEQ L_PlayParrySoundForDamageType
 
+; TRIFORCE: Subtracts [$07] from ObjHP[X]. Since both HP and damage are multiples of $10,
+; TRIFORCE: the low nibble of ObjHP is always 0. Python reads health as ObjHP >> 4.
+; TRIFORCE: Death occurs when HP < damage (BCC) or HP - damage == 0 (BEQ).
 DealDamage:
     ; Play the "harmed" sound.
     LDA #$02
@@ -6109,6 +6112,7 @@ CheckMonsterSwordShotOrMagicShotCollision:
 ; Returns:
 ; [00]: weapon slot
 ;
+; TRIFORCE: Fire damage=$10(1HP), Bomb damage=$40(4HP). Both multiples of $10.
 CheckMonsterBombOrFireCollision:
     STY $00                     ; [00] holds the weapon slot
 
@@ -6163,6 +6167,8 @@ CheckMonsterBombOrFireCollision:
 L7595_Exit:
     RTS
 
+; TRIFORCE: Sword damage per level: Wood=$10(1HP), White=$20(2HP), Magic=$40(4HP).
+; TRIFORCE: All multiples of $10 so ObjHP low nibble stays 0 after subtraction.
 SwordDamagePoints:
     .BYTE $10, $20, $40
 
